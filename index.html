@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Digital Perpustakaan Madrasah</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full bg-gray-50 text-gray-800 flex flex-col font-sans antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-emerald-700 rounded-xl flex items-center justify-center text-white shadow-inner text-2xl font-bold border border-emerald-600">
+                    <!-- <i class="fa-solid fa-book-open"></i> -->
+                     <img style="border-radius: 10px 10px 10px 10px;" src="img/logo-ppmti.jpg" alt="" srcset="">
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">Perpustakaan Digital Madrasah PPMTI Tanjung Berulak</h1>
+                    <p class="text-xs text-emerald-200">Katalog Referensi Islam, Pesantren & Umum</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="hidden md:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-900 text-emerald-200 border border-emerald-700">
+                    <i class="fa-solid fa-circle text-emerald-400 text-[8px] mr-2 animate-pulse"></i> Sistem Aktif & Terverifikasi
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero / Search Section -->
+    <section class="bg-gradient-to-b from-emerald-800 to-emerald-900 text-white py-10 px-4 sm:px-6 lg:px-8 shadow-inner">
+        <div class="max-w-4xl mx-auto text-center space-y-4">
+            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Temukan Buku & Kitab Referensi Pilihan</h2>
+            <p class="text-emerald-100 text-sm sm:text-base max-w-2xl mx-auto">
+                Pencarian cepat katalog perpustakaan madrasah mencakup literatur keislaman, kuning/pesantren, hingga wawasan umum.
+            </p>
+            <div class="relative max-w-2xl mx-auto mt-6">
+                <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filterBooks()" placeholder="Cari judul buku, penulis, atau topik (contoh: Fiqih, Tafsir, Matematika)..." 
+                    class="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-gray-900 placeholder-gray-400 shadow-xl focus:outline-none focus:ring-4 focus:ring-emerald-500/50 transition-all text-sm sm:text-base">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Layout -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div class="flex flex-wrap gap-2" id="categoryTabs">
+                <button onclick="setCategory('all')" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-emerald-700 text-white shadow-md">
+                    Semua Koleksi (45)
+                </button>
+                <button onclick="setCategory('islamic')" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200">
+                    Koleksi Islam & Pesantren (30)
+                </button>
+                <button onclick="setCategory('general')" class="cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200">
+                    Koleksi Umum (15)
+                </button>
+            </div>
+            <div class="text-xs sm:text-sm text-gray-500 font-medium" id="resultCount">
+                Menampilkan 45 dari 45 buku
+            </div>
+        </div>
+
+        <!-- Book Grid -->
+        <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Dynamic items will be injected here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm mt-4">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-face-confused"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800">Buku Tidak Ditemukan</h3>
+            <p class="text-sm text-gray-500 mt-1">Coba gunakan kata kunci lain atau pilih kategori yang berbeda.</p>
+            <button onclick="resetSearch()" class="mt-4 px-4 py-2 bg-emerald-700 text-white text-xs font-semibold rounded-xl hover:bg-emerald-800 transition">
+                Reset Pencarian
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Book Detail Modal -->
+    <div id="bookModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm transition-all">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100 transform transition-all">
+            <div class="p-6 sm:p-8 space-y-6">
+                <div class="flex items-start justify-between">
+                    <span id="modalCategoryBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"></span>
+                    <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <div class="w-full sm:w-1/3 h-56 bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-2xl flex flex-col items-center justify-center text-white p-4 shadow-lg text-center shrink-0">
+                        <i id="modalIcon" class="fa-solid fa-book text-4xl mb-3 text-emerald-200"></i>
+                        <span id="modalCode" class="text-xs font-mono bg-black/20 px-2 py-1 rounded"></span>
+                    </div>
+                    <div class="flex-1 space-y-3">
+                        <h3 id="modalTitle" class="text-xl sm:text-2xl font-bold text-gray-900 leading-snug"></h3>
+                        <p class="text-sm font-medium text-emerald-700 flex items-center">
+                            <i class="fa-solid fa-user-pen mr-2"></i> <span id="modalAuthor"></span>
+                        </p>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 pt-2 border-t border-gray-100">
+                            <div><strong class="text-gray-700">Penerbit:</strong> <span id="modalPublisher"></span></div>
+                            <div><strong class="text-gray-700">Tahun:</strong> <span id="modalYear"></span></div>
+                            <div><strong class="text-gray-700">Rak Buku:</strong> <span id="modalShelf"></span></div>
+                            <div><strong class="text-gray-700">Stok:</strong> <span id="modalStock" class="text-emerald-600 font-bold">Tersedia</span></div>
+                        </div>
+                        <p id="modalDesc" class="text-xs sm:text-sm text-gray-600 leading-relaxed pt-2"></p>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+                    <button onclick="closeModal()" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                        Tutup
+                    </button>
+                    <button onclick="simulateBorrow()" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-700 text-white hover:bg-emerald-800 shadow-md transition flex items-center">
+                        <i class="fa-solid fa-bookmark mr-2"></i> Ajukan Peminjaman
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-500 space-y-1">
+            <p>&copy; 2026 Perpustakaan Digital Madrasah & Pondok Pesantren PPMTI Tanjung Berulak.</p>
+            <p>Sistem Katalog Buku Terpadu (30 Kitab/Islam & 15 Buku Umum)</p>
+        </div>
+    </footer>
+
+    <!-- Application Script -->
+    <script>
+        // Dataset: 30 Islamic/Pesantren Books & 15 General Books (Total 45)
+        const books = [
+            // --- ISLAMIC & PESANTREN (30 Books) ---
+            { id: 1, title: "Tafsir Al-Misbah (Jilid 1-15)", author: "M. Quraish Shihab", category: "islamic", year: "2019", publisher: "Lentera Hati", shelf: "R-A1", code: "ISL-001", desc: "Koleksi lengkap rujukan tafsir Al-Qur'an konteks keindonesiaan yang mendalam." },
+            { id: 2, title: "Fathul Qarib Al-Mujib", author: "Syarh Ibnu Qasim Al-Ghazi", category: "islamic", year: "2021", publisher: "Menara Kudus", shelf: "R-A2", code: "ISL-002", desc: "Kitab kuning klasik rujukan fiqih madzhab Syafi'i standar pesantren salaf." },
+            { id: 3, title: "Riyadhus Shalihin", author: "Imam An-Nawawi", category: "islamic", year: "2020", publisher: "Darul Kutub Ilmiyah", shelf: "R-A1", code: "ISL-003", desc: "Kumpulan hadits pilihan Rasulullah SAW mengenai akhlak, adab, dan ibadah." },
+            { id: 4, title: "Ta'lim Muta'allim Fi Tariq Ta'allum", author: "Syeikh Az-Zarnuji", category: "islamic", year: "2018", publisher: "Toha Putra", shelf: "R-A3", code: "ISL-004", desc: "Kitab pedoman etika dan metode belajar santri dalam menuntut ilmu." },
+            { id: 5, title: "Bulughul Maram min Adillatil Ahkam", author: "Ibnu Hajar Al-Asqalani", category: "islamic", year: "2021", publisher: "Darul Fikr", shelf: "R-A2", code: "ISL-005", desc: "Kitab hadits hukum fundamentil yang dikaji luas di seluruh pesantren nusantara." },
+            { id: 6, title: "Al-Hikam", author: "Syeikh Ibnu Atha'illah Al-Sakandari", category: "islamic", year: "2019", publisher: "Pustaka Al-Kautsar", shelf: "R-A3", code: "ISL-006", desc: "Mutiara hikmah tasawuf untuk penyucian hati dan kedekatan kepada Sang Pencipta." },
+            { id: 7, title: "Safinatun Najah", author: "Syeikh Salim bin Abdullah Al-Hadhrami", category: "islamic", year: "2022", publisher: "Maktabah Al-Hidayah", shelf: "R-A2", code: "ISL-007", desc: "Kitab dasar fiqih ibadah mu'tabarah untuk pemula dan santri tingkat dasar." },
+            { id: 8, title: "Arba'in Nawawiyah", author: "Imam An-Nawawi", category: "islamic", year: "2020", publisher: "Media Hidayah", shelf: "R-A1", code: "ISL-008", desc: "Empat puluh hadits pilihan yang mencakup poros ajaran Islam secara universal." },
+            { id: 9, title: "Bidayatul Hidayah", author: "Imam Al-Ghazali", category: "islamic", year: "2017", publisher: "Dar Ihyah Al-Kutub", shelf: "R-A3", code: "ISL-009", desc: "Panduan praktis beribadah, berakhlak mulia, dan menjauhi maksiat." },
+            { id: 10, title: "Nahwu Sharaf Dasar (Al-Jurumiyah)", author: "Syeikh Ash-Shanhaji", category: "islamic", year: "2021", publisher: "Maktabah Ahmad", shelf: "R-A4", code: "ISL-010", desc: "Ilmu alat dasar wajib bagi santri untuk memahami kitab-kitab kuning gundul." },
+            { id: 11, title: "Qashat Al-Anbiya (Kisah Para Nabi)", author: "Ibnu Katsir", category: "islamic", year: "2018", publisher: "Pustaka As-Sunnah", shelf: "R-A1", code: "ISL-011", desc: "Sejarah komprehensif kehidupan dan dakwah para nabi Allah SWT." },
+            { id: 12, title: "Ushul Fiqh Pesantren", author: "KH. Hasyim Asy'ari", category: "islamic", year: "2016", publisher: "Tebuireng Press", shelf: "R-A2", code: "ISL-012", desc: "Pemikiran metodologi hukum Islam pendiri Nahdlatul Ulama." },
+            { id: 13, title: "Sirah Nabawiyah Ibnu Hisyam", author: "Ibnu Hisyam", category: "islamic", year: "2019", publisher: "Darul Fajr", shelf: "R-A1", code: "ISL-013", desc: "Biografi terlengkap perjalanan hidup Nabi Muhammad SAW." },
+            { id: 14, title: "Kifayatul Akhyar", author: "Taqiyuddin Abu Bakar Al-Husaini", category: "islamic", year: "2020", publisher: "Al-Haromain", shelf: "R-A2", code: "ISL-014", desc: "Penjelasan ringkas namun padat tentang fiqih madzhab Syafi'i." },
+            { id: 15, title: "Nashaihul Ibad", author: "Syeikh Nawawi Al-Bantani", category: "islamic", year: "2021", publisher: "Menara Kudus", shelf: "R-A3", code: "ISL-015", desc: "Nasihat-nasihat mulia ulama Nusantara berkaliber internasional." },
+            { id: 16, title: "Tafsir Jalalain", author: "Jalaluddin Al-Mahalli & Jalaluddin As-Suyuthi", category: "islamic", year: "2018", publisher: "Dar Al-Ma'rifah", shelf: "R-A1", code: "ISL-016", desc: "Kitab tafsir klasik yang menjadi kurikulum utama di seluruh pesantren." },
+            { id: 17, title: "Risalah Ahlussunnah wal Jamaah", author: "KH. Hasyim Asy'ari", category: "islamic", year: "2017", publisher: "Khalista", shelf: "R-A3", code: "ISL-017", desc: "Pondok akidah moderat bagi kalangan madrasah dan pesantren." },
+            { id: 18, title: "Mukhtar Al-Hadits Al-Nabawiyah", author: "Sayyid Ahmad Al-Hasyimi", category: "islamic", year: "2019", publisher: "Darul Kutub", shelf: "R-A1", code: "ISL-018", desc: "Pilihan hadits penyejuk hati dan motivasi hidup harian." },
+            { id: 19, title: "Adabul Alim wal Muta'allim", author: "KH. Hasyim Asy'ari", category: "islamic", year: "2020", publisher: "Lektur Pesantren", shelf: "R-A3", code: "ISL-019", desc: "Etika hubungan guru dan murid dalam ekosistem pendidikan Islam." },
+            { id: 20, title: "Fathul Mu'in", author: "Syeikh Zainuddin Al-Malibari", category: "islamic", year: "2021", publisher: "Darul Fikr", shelf: "R-A2", code: "ISL-020", desc: "Kitab fiqih tingkat lanjut rujukan para kiai dan santri senior." },
+            { id: 21, title: "Minhajul Abidin", author: "Imam Al-Ghazali", category: "islamic", year: "2018", publisher: "Mutiara Ilmu", shelf: "R-A3", code: "ISL-021", desc: "Metode menuju pengabdian terbaik kepada Allah SWT." },
+            { id: 22, title: "Durratun Nashihin", author: "Utsman bin Hasan bin Ahmad", category: "islamic", year: "2019", publisher: "Toifur", shelf: "R-A3", code: "ISL-022", desc: "Kumpulan ceramah dan nasihat keagamaan untuk majelis taklim." },
+            { id: 23, title: "Tarikh Tasyri' Al-Islami", author: "Sheikh Muhammad Khudari", category: "islamic", year: "2017", publisher: "Dar Al-Fikr", shelf: "R-A4", code: "ISL-023", desc: "Sejarah perkembangan hukum Islam dari masa nabi hingga pembentukan madzhab." },
+            { id: 24, title: "Al-Luma' fi Ushul Al-Fiqh", author: "Imam Asy-Syirazi", category: "islamic", year: "2020", publisher: "Maktabah Imam", shelf: "R-A4", code: "ISL-024", desc: "Pengantar dasar metodologi penetapan hukum Islam." },
+            { id: 25, title: "Ihya Ulumuddin (Jilid 1-4)", author: "Imam Al-Ghazali", category: "islamic", year: "2021", publisher: "Darul Minha", shelf: "R-A3", code: "ISL-025", desc: "Mahakarya terbesar tentang kebangkitan ilmu-ilmu agama dan spiritual." },
+            { id: 26, title: "Qawaidul Fiqhiyah", author: "Prof. Dr. Wahbah Az-Zuhaili", category: "islamic", year: "2019", publisher: "Gema Insani", shelf: "R-A2", code: "ISL-026", desc: "Kaidah-kaidah universal dalam memahami fleksibilitas hukum Islam." },
+            { id: 27, title: "Hidayatul Hidayah", author: "Imam Al-Ghazali", category: "islamic", year: "2018", publisher: "Karya Toha", shelf: "R-A3", code: "ISL-027", desc: "Bimbingan rohani ringkas untuk pembersihan diri." },
+            { id: 28, title: "Al-Arba'in Al-Bulandariyah", author: "Syeikh Yasin Al-Fadani", category: "islamic", year: "2020", publisher: "Dar Al-Bashaer", shelf: "R-A1", code: "ISL-028", desc: "Sanad hadits pilihan dari musnid nusantara termasyhur." },
+            { id: 29, title: "Tuhfatul Atfal (Ilmu Tajwid)", author: "Syeikh Sulaiman Al-Jamzuri", category: "islamic", year: "2021", publisher: "Menara Kudus", shelf: "R-A4", code: "ISL-029", desc: "Nazham dasar ilmu tajwid untuk meluruskan bacaan Al-Qur'an." },
+            { id: 30, title: "Khulasah Nurul Yaqin", author: "Syeikh Umar Abdul Jabbar", category: "islamic", year: "2022", publisher: "Al-Haramain", shelf: "R-A1", code: "ISL-030", desc: "Sejarah ringkas Nabi Muhammad SAW yang dipelajari madrasah ibtidaiyah/sanawiyah." },
+
+            // --- GENERAL COLLECTION (15 Books) ---
+            { id: 31, title: "Matematika Tingkat Lanjut SMA/MA", author: "Tim Kemendikbud", category: "general", year: "2022", publisher: "Puskurbuk", shelf: "R-B1", code: "GEN-001", desc: "Buku pegangan resmi kurikulum merdeka untuk matematika tingkat lanjut." },
+            { id: 32, title: "Fisika Dasar untuk Sains & Madrasah", author: "Halliday & Resnick", category: "general", year: "2020", publisher: "Erlangga", shelf: "R-B2", code: "GEN-002", desc: "Referensi utama ilmu fisika mekanika dan termodinamika modern." },
+            { id: 33, title: "Biologi Sel & Molekuler", author: "Campbell Reece", category: "general", year: "2021", publisher: "Pearson Education", shelf: "R-B2", code: "GEN-003", desc: "Koleksi sains biologi komprehensif bagi peminat riset madrasah." },
+            { id: 34, title: "Sejarah Kebudayaan & Peradaban Dunia", author: "Toynbee & Hitti", category: "general", year: "2019", publisher: "Pustaka Pelajar", shelf: "R-B3", code: "GEN-004", desc: "Menelusuri dinamika peradaban timur dan barat sepanjang sejarah." },
+            { id: 35, title: "Bahasa Indonesia Akademik & Jurnalistik", author: "Eneste & Alwi", category: "general", year: "2022", publisher: "Gramedia", shelf: "R-B4", code: "GEN-005", desc: "Pedoman tata bahasa dan penulisan karya ilmiah yang baku." },
+            { id: 36, title: "English Grammar in Use", author: "Raymond Murphy", category: "general", year: "2020", publisher: "Cambridge University Press", shelf: "R-B4", code: "GEN-006", desc: "Buku standar internasional belajar tata bahasa Inggris mandiri." },
+            { id: 37, title: "Kimia Dasar: Prinsip & Modern", author: "Chang Raymond", category: "general", year: "2021", publisher: "Salemba Teknika", shelf: "R-B2", code: "GEN-007", desc: "Pengantar komprehensif struktur atom, stoikiometri, dan reaksi kimia." },
+            { id: 38, title: "Kewarganegaraan & Pancasila Bernegara", author: "Prof. Dr. Kaelan", category: "general", year: "2018", publisher: "Paradigma", shelf: "R-B3", code: "GEN-008", desc: "Studi mendalam wawasan kebangsaan dan nilai dasar NKRI." },
+            { id: 39, title: "Ekonomi Syariah & Konvensional", author: "Adiwarman Karim", category: "general", year: "2020", publisher: "Rajawali Pers", shelf: "R-B3", code: "GEN-009", desc: "Analisis perbandingan sistem ekonomi makro modern dan islam." },
+            { id: 40, title: "Pengantar Ilmu Komputer & Pemrograman", author: "Budi Raharjo", category: "general", year: "2022", publisher: "Informatika", shelf: "R-B1", code: "GEN-010", desc: "Dasar logika algoritma dan literasi digital era informasi." },
+            { id: 41, title: "Geografi Nusantara & Klimatologi", author: "Bintarto", category: "general", year: "2017", publisher: "Bumi Aksara", shelf: "R-B2", code: "GEN-011", desc: "Kajian bentang alam, kependudukan, dan mitigasi bencana di Indonesia." },
+            { id: 42, title: "Sosiologi Pendidikan Madrasah", author: "Prof. Dr. Nur Syam", category: "general", year: "2019", publisher: "Kencana", shelf: "R-B3", code: "GEN-012", desc: "Interaksi sosial dalam institusi pendidikan khas pesantren dan madrasah." },
+            { id: 43, title: "Ensiklopedi Pengetahuan Alam Semesta", author: "Stephen Hawking et al.", category: "general", year: "2018", publisher: "Kepustakaan Populer Gramedia", shelf: "R-B2", code: "GEN-013", desc: "Menjelajahi misteri ruang angkasa, galaksi, dan hukum fisika kuantum." },
+            { id: 44, title: "Kewirausahaan & Kemandirian Santri", author: "Dr. Irwansyah", category: "general", year: "2021", publisher: "Elex Media Komputindo", shelf: "R-B3", code: "GEN-014", desc: "Panduan membangun jiwa bisnis dan ekonomi mandiri sejak di pesantren." },
+            { id: 45, title: "Kumpulan Karya Tulis Ilmiah Remaja", author: "Lembaga Riset LIPI", category: "general", year: "2022", publisher: "Media Pustaka", shelf: "R-B1", code: "GEN-015", desc: "Inspirasi riset sains dan sosial pemenang olimpiade tingkat nasional." }
+        ];
+
+        let currentCategory = 'all';
+        let currentSearch = '';
+        let activeBookId = null;
+
+        // Render books on load
+        window.onload = function() {
+            renderBooks(books);
+        }
+
+        function setCategory(category) {
+            currentCategory = category;
+            
+            // Update buttons styling
+            const buttons = document.querySelectorAll('.cat-btn');
+            buttons.forEach(btn => {
+                btn.className = "cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200";
+            });
+            event.target.className = "cat-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-emerald-700 text-white shadow-md";
+
+            filterBooks();
+        }
+
+        function filterBooks() {
+            currentSearch = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = books.filter(book => {
+                const matchesCategory = currentCategory === 'all' || book.category === currentCategory;
+                const matchesSearch = book.title.toLowerCase().includes(currentSearch) || 
+                                      book.author.toLowerCase().includes(currentSearch) || 
+                                      book.code.toLowerCase().includes(currentSearch) ||
+                                      book.publisher.toLowerCase().includes(currentSearch);
+                return matchesCategory && matchesSearch;
+            });
+
+            renderBooks(filtered);
+        }
+
+        function renderBooks(data) {
+            const grid = document.getElementById('bookGrid');
+            const emptyState = document.getElementById('emptyState');
+            const resultCount = document.getElementById('resultCount');
+
+            resultCount.innerText = `Menampilkan ${data.length} dari 45 buku`;
+
+            if (data.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = data.map(book => {
+                const isIslamic = book.category === 'islamic';
+                return `
+                    <div onclick="openModal(${book.id})" class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer">
+                        <div class="h-40 bg-gradient-to-br ${isIslamic ? 'from-emerald-800 to-emerald-950' : 'from-blue-700 to-indigo-900'} p-4 flex flex-col justify-between text-white relative overflow-hidden">
+                            <div class="absolute -right-4 -bottom-4 text-white/10 text-7xl font-bold">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                            <div class="flex justify-between items-start z-10">
+                                <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${isIslamic ? 'bg-emerald-700/80 text-emerald-100' : 'bg-blue-600/80 text-blue-100'}">
+                                    ${isIslamic ? 'Kitab / Islam' : 'Umum'}
+                                </span>
+                                <span class="text-xs font-mono bg-black/30 px-2 py-0.5 rounded text-gray-200">${book.code}</span>
+                            </div>
+                            <div class="z-10">
+                                <span class="text-[11px] text-emerald-200 block truncate font-medium"><i class="fa-solid fa-location-dot mr-1"></i> Rak: ${book.shelf}</span>
+                            </div>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm line-clamp-2 group-hover:text-emerald-700 transition">${book.title}</h4>
+                                <p class="text-xs text-gray-500 mt-1 truncate"><i class="fa-solid fa-pen-nib mr-1"></i> ${book.author}</p>
+                            </div>
+                            <div class="pt-3 border-t border-gray-50 flex items-center justify-between text-xs">
+                                <span class="text-gray-400">${book.publisher} (${book.year})</span>
+                                <span class="text-emerald-700 font-semibold group-hover:translate-x-1 transition-transform">Detail <i class="fa-solid fa-chevron-right ml-1"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openModal(id) {
+            activeBookId = id;
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+
+            const isIslamic = book.category === 'islamic';
+
+            document.getElementById('modalCategoryBadge').innerText = isIslamic ? 'Koleksi Islam & Pesantren' : 'Koleksi Umum';
+            document.getElementById('modalCode').innerText = book.code;
+            document.getElementById('modalTitle').innerText = book.title;
+            document.getElementById('modalAuthor').innerText = book.author;
+            document.getElementById('modalPublisher').innerText = book.publisher;
+            document.getElementById('modalYear').innerText = book.year;
+            document.getElementById('modalShelf').innerText = book.shelf;
+            document.getElementById('modalDesc').innerText = book.desc;
+
+            document.getElementById('bookModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('bookModal').classList.add('hidden');
+        }
+
+        function simulateBorrow() {
+            const book = books.find(b => b.id === activeBookId);
+            closeModal();
+            // Custom non-blocking message box simulation
+            const msgBox = document.createElement('div');
+            msgBox.className = "fixed bottom-5 right-5 z-50 bg-emerald-800 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 animate-bounce";
+            msgBox.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 text-xl"></i><div><p class="font-bold text-sm">Peminjaman Berhasil Dicatat!</p><p class="text-xs text-emerald-200">Silakan ambil buku "${book.title}" di rak ${book.shelf}.</p></div>`;
+            document.body.appendChild(msgBox);
+            setTimeout(() => {
+                msgBox.remove();
+            }, 4000);
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            setCategory('all');
+        }
+    </script>
+</body>
+</html>
